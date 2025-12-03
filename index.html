@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AI Chatbot</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+  </style>
+</head>
+<body>
+  <h1>AI Chatbot</h1>
+  <div id="chat"></div>
+  <input id="input" type="text" placeholder="メッセージを入力…" style="width: 80%;">
+  <button onclick="send()">送信</button>
+
+  <script>
+    function addMessage(msg) {
+      const chat = document.getElementById("chat");
+      chat.innerHTML += msg + "<br>";
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function send() {
+      const text = document.getElementById("input").value;
+      document.getElementById("input").value = "";
+      addMessage("あなた: " + text);
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      addMessage("AI: " + data.reply);
+    }
+  </script>
+</body>
+</html>
