@@ -1,50 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>AI Chatbot</title>
   <style>
     body {
-      font-family: sans-serif;
-      padding: 0;
       margin: 0;
-      background: #f5f5f5;
+      padding: 0;
+      background: #e5e5e5;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+    }
+
+    /* 上の緑のバー（LINEっぽいやつ） */
+    #header {
+      background: #06c755;
+      color: white;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     #chat-container {
-      width: 100%;
       max-width: 600px;
       height: 100vh;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      border: 1px solid #ddd;
-      background: white;
+      background: #e5e5e5;
     }
 
     #chat {
       flex: 1;
-      padding: 15px;
+      padding: 12px;
       overflow-y: auto;
     }
 
     .msg {
-      max-width: 70%;
+      max-width: 75%;
       padding: 10px 14px;
-      margin: 8px 0;
-      border-radius: 12px;
+      margin: 6px 0;
+      border-radius: 14px;
+      font-size: 15px;
       line-height: 1.4em;
-      width: fit-content;
+      display: inline-block;
+      white-space: pre-wrap;
     }
 
+    /* ユーザー（右側、LINEの緑） */
     .user {
-      background: #9be7ff;
+      background: #06c755;
+      color: white;
       margin-left: auto;
       border-bottom-right-radius: 0;
     }
 
+    /* AI（左側、白） */
     .ai {
-      background: #eee;
+      background: white;
+      color: #111;
       margin-right: auto;
       border-bottom-left-radius: 0;
     }
@@ -53,6 +70,7 @@
       padding: 10px;
       display: flex;
       gap: 10px;
+      background: white;
       border-top: 1px solid #ddd;
     }
 
@@ -61,20 +79,22 @@
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 20px;
+      outline: none;
     }
 
     #send-btn {
       padding: 10px 18px;
-      background: #0078ff;
+      background: #06c755;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 20px;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    #send-btn:hover {
-      background: #005fcc;
+    #send-btn:active {
+      background: #05b24c;
     }
 
     .loading {
@@ -86,6 +106,8 @@
 
 <body>
   <div id="chat-container">
+    <div id="header">AI チャット</div>
+
     <div id="chat"></div>
 
     <div id="input-area">
@@ -110,7 +132,7 @@
     function showLoading() {
       loadingDiv = document.createElement("div");
       loadingDiv.className = "msg ai loading";
-      loadingDiv.textContent = "AIが入力中…";
+      loadingDiv.textContent = "..." ;
       chat.appendChild(loadingDiv);
       chat.scrollTop = chat.scrollHeight;
     }
