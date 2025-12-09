@@ -6,6 +6,7 @@
   <style>
     body { font-family: sans-serif; padding: 20px; }
     #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+    #input { padding: 5px; }
   </style>
 </head>
 <body>
@@ -22,18 +23,30 @@
     }
 
     async function send() {
-      const text = document.getElementById("input").value;
+      const text = document.getElementById("input").value.trim();
+      if (!text) return;
+
       document.getElementById("input").value = "";
       addMessage("あなた: " + text);
 
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-      });
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
 
-      const data = await res.json();
-      addMessage("AI: " + data.reply);
+        if (!res.ok) {
+          addMessage("AI: エラーが発生しました（サーバー）");
+          return;
+        }
+
+        const data = await res.json();
+        addMessage("AI: " + data.reply);
+
+      } catch (err) {
+        addMessage("AI: ネットワークエラーが発生しました");
+      }
     }
   </script>
 </body>
