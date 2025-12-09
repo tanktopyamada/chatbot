@@ -1,29 +1,57 @@
-export default async function handler(req, res) {
-  try {
-    const { message } = req.body;
+<script>
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  // ←★ Enterキーで送信
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // 改行防止
+      send();
+    }
+  });
+
+  function addMessage(text, role) {
+    const div = document.createElement("div");
+    div.className = "msg " + role;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  let loadingDiv = null;
+
+  function showLoading() {
+    loadingDiv = document.createElement("div");
+    loadingDiv.className = "msg ai loading";
+    loadingDiv.textContent = "...";
+    chat.appendChild(loadingDiv);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function hideLoading() {
+    if (loadingDiv) {
+      chat.removeChild(loadingDiv);
+      loadingDiv = null;
+    }
+  }
+
+  async function send() {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+
+    addMessage(text, "user");
+    showLoading();
+
+    const res = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: message }]
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
     });
 
-    const data = await response.json();
+    const data = await res.json();
+    hideLoading();
 
-    // OpenAIエラーがあれば直接返す
-    if (data.error) {
-      return res.status(400).json({ reply: "OpenAIエラー: " + data.error.message });
-    }
-
-    return res.status(200).json({ reply: data.choices[0].message.content });
-
-  } catch (err) {
-    return res.status(500).json({ reply: "サーバーエラー: " + err.message });
+    addMessage(data.reply, "ai");
   }
-}
+</script>
